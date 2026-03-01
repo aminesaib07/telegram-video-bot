@@ -5,7 +5,19 @@ from telegram.ext import ApplicationBuilder, CommandHandler, MessageHandler, Cal
 
 # ---------------------------
 TOKEN = os.getenv("TOKEN")  # ضع توكن البوت في Variables على Railway
-OWNER_ID = 7075889236        # ضع رقمك في Telegram
+# إزالة شرط OWNER_ID
+async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    await update.message.reply_text("👋 مرحبا! أرسل رابط الفيديو.")
+
+async def handle_link(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    context.user_data["url"] = update.message.text
+    # باقي الكود كما هو
+
+async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    query = update.callback_query
+    await query.answer("⏳ جاري التحميل...", show_alert=False)
+    await query.edit_message_reply_markup(reply_markup=None)
+    # لا داعي للتحقق من OWNER_ID
 # ---------------------------
 
 # التأكد من وجود ffmpeg قبل أي تحميل
