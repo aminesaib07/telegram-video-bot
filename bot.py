@@ -30,7 +30,8 @@ async def handle_link(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query = update.callback_query
-    await query.answer()
+    await query.answer("⏳ جاري التحميل...", show_alert=False)
+    await query.edit_message_reply_markup(reply_markup=None)
 
     if query.from_user.id != OWNER_ID:
         return
