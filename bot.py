@@ -4,15 +4,17 @@ from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import ApplicationBuilder, CommandHandler, MessageHandler, CallbackQueryHandler, filters, ContextTypes
 
 # ---------------------------
-TOKEN = os.getenv("TOKEN")  # ضع توكن البوت هنا كمتغير بيئة
+TOKEN = os.getenv("TOKEN")  # ضع توكن البوت في Variables على Railway
 OWNER_ID = 7075889236        # ضع رقمك في Telegram
 # ---------------------------
 
+# دالة البداية
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if update.effective_user.id != OWNER_ID:
         return
-    await update.message.reply_text("👋 أرسل رابط الفيديو")
+    await update.message.reply_text("👋 مرحبا! أرسل رابط الفيديو.")
 
+# دالة استقبال الرابط
 async def handle_link(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if update.effective_user.id != OWNER_ID:
         return
@@ -30,10 +32,11 @@ async def handle_link(update: Update, context: ContextTypes.DEFAULT_TYPE):
     ]
 
     await update.message.reply_text(
-        "اختر الجودة:",
+        "اختر الجودة أو MP3:",
         reply_markup=InlineKeyboardMarkup(keyboard)
     )
 
+# دالة التعامل مع الأزرار
 async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query = update.callback_query
     await query.answer("⏳ جاري التحميل...", show_alert=False)
@@ -46,6 +49,7 @@ async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
     choice = query.data
     await query.edit_message_text("⏳ جاري التحميل...")
 
+    # إعدادات التحميل
     if choice == "mp3":
         ydl_opts = {
             'format': 'bestaudio',
@@ -72,6 +76,7 @@ async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
         with yt_dlp.YoutubeDL(ydl_opts) as ydl:
             ydl.download([url])
 
+        # إرسال الملف بعد التحميل
         for file in os.listdir():
             if file.startswith("video"):
                 await query.message.reply_video(video=open(file, "rb"))
@@ -83,21 +88,14 @@ async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
                 break
 
     except Exception as e:
-        await query.message.reply_text("❌ حدث خطأ أثناء التحميل")
+        await query.message.reply_text(f"❌ حدث خطأ أثناء التحميل.\n{e}")
         print(e)
 
 # ---------------------------
-PORT = int(os.environ.get("PORT", 8000))
-RAILWAY_URL = os.environ.get("RAILWAY_STATIC_URL")
-
+# تشغيل البوت عبر Polling (أفضل على Railway)
 app = ApplicationBuilder().token(TOKEN).build()
 app.add_handler(CommandHandler("start", start))
 app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_link))
 app.add_handler(CallbackQueryHandler(button_handler))
 
-# تشغيل Webhook
-app.run_webhook(
-    listen="0.0.0.0",
-    port=PORT,
-    webhook_url=RAILWAY_URL
-)
+app.run_polling()
