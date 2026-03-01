@@ -5,7 +5,7 @@ from telegram.ext import ApplicationBuilder, CommandHandler, MessageHandler, Cal
 
 # ---------------------------
 # ضع هنا التوكن الذي أخذته من BotFather
-TOKEN = os.getenv("8793656442:AAE7F0XSTmEUlR9fyDQRezDMrMGcizydIig")
+TOKEN = os.getenv("TOKEN")
 
 # ضع رقم Telegram الخاص بك هنا
 OWNER_ID = 7075889236
