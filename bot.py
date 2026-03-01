@@ -37,15 +37,11 @@ async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     await query.edit_message_text("⏳ جاري التحميل...")
 
-    if choice == "mp3":
-        ydl_opts = {
-            'format': 'bestaudio',
-            'outtmpl': 'audio.%(ext)s',
-            'postprocessors': [{
-                'key': 'FFmpegExtractAudio',
-                'preferredcodec': 'mp3'
-            }]
-        }
+   if choice == "mp3":
+    ydl_opts = {
+        'format': 'bestaudio',
+        'outtmpl': 'audio.%(ext)s'
+    }
     else:
         ydl_opts = {
             'format': f'bestvideo[height<={choice}]+bestaudio/best',
