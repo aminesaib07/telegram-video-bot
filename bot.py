@@ -8,6 +8,11 @@ TOKEN = os.getenv("TOKEN")  # ضع توكن البوت في Variables على Rai
 OWNER_ID = 7075889236        # ضع رقمك في Telegram
 # ---------------------------
 
+# التأكد من وجود ffmpeg قبل أي تحميل
+if os.system("which ffmpeg") != 0:
+    print("🔧 تثبيت ffmpeg تلقائيًا...")
+    os.system("apt update && apt install -y ffmpeg")
+
 # دالة البداية
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if update.effective_user.id != OWNER_ID:
