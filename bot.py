@@ -4,7 +4,7 @@ from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import ApplicationBuilder, CommandHandler, MessageHandler, CallbackQueryHandler, filters, ContextTypes
 
 TOKEN = os.getenv("TOKEN")
-OWNER_ID = 7075889236  # سنغيره بعد قليل
+OWNER_ID = 123456789  # ضع Telegram ID الخاص بك هنا
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if update.effective_user.id != OWNER_ID:
@@ -32,16 +32,19 @@ async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query = update.callback_query
     await query.answer()
 
+    if query.from_user.id != OWNER_ID:
+        return
+
     url = context.user_data.get("url")
     choice = query.data
 
     await query.edit_message_text("⏳ جاري التحميل...")
 
-   if choice == "mp3":
-    ydl_opts = {
-        'format': 'bestaudio',
-        'outtmpl': 'audio.%(ext)s'
-    }
+    if choice == "mp3":
+        ydl_opts = {
+            'format': 'bestaudio',
+            'outtmpl': 'audio.%(ext)s'
+        }
     else:
         ydl_opts = {
             'format': f'bestvideo[height<={choice}]+bestaudio/best',
@@ -54,14 +57,17 @@ async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
         for file in os.listdir():
             if file.startswith("video"):
-                await query.message.reply_video(video=open(file, 'rb'))
+                await query.message.reply_video(video=open(file, "rb"))
                 os.remove(file)
+                break
             elif file.startswith("audio"):
-                await query.message.reply_audio(audio=open(file, 'rb'))
+                await query.message.reply_audio(audio=open(file, "rb"))
                 os.remove(file)
+                break
 
-    except:
-        await query.message.reply_text("❌ حدث خطأ")
+    except Exception as e:
+        await query.message.reply_text("❌ حدث خطأ أثناء التحميل")
+        print(e)
 
 app = ApplicationBuilder().token(TOKEN).build()
 
