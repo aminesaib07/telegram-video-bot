@@ -25,9 +25,6 @@ async def handle_link(update: Update, context: ContextTypes.DEFAULT_TYPE):
         [InlineKeyboardButton("360p", callback_data="360")],
         [InlineKeyboardButton("720p", callback_data="720")],
         [InlineKeyboardButton("1080p", callback_data="1080")],
-        [InlineKeyboardButton("1440p", callback_data="1440")],
-        [InlineKeyboardButton("2160p", callback_data="2160")],
-        [InlineKeyboardButton("أفضل جودة 🔝", callback_data="best")],
         [InlineKeyboardButton("MP3 🎵", callback_data="mp3")]
     ]
 
